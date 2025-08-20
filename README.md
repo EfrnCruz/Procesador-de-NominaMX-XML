@@ -22,7 +22,7 @@ Aplicación web desarrollada con Streamlit para procesar archivos XML de nómina
 
 1. **Clonar o descargar el proyecto**
    ```bash
-   git clone <url-del-repositorio>
+   git clone https://github.com/EfrnCruz/Procesador-de-NominaMX-XML.git
    cd procesador-nomina-xml
    ```
 
