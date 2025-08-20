@@ -1,6 +1,6 @@
 # 🏢 Procesador de Nómina XML - SAT México
 
-Aplicación web desarrollada con Streamlit para procesar archivos XML de nómina del SAT (México), incluyendo archivos comprimidos en ZIP, normalizar la información y exportar a Excel.
+Aplicación web desarrollada con Streamlit para procesar archivos XML de nómina del SAT (México), incluyendo archivos en ZIP, normaliza la información y exportar a Excel.
 
 ## 🚀 Características
 
