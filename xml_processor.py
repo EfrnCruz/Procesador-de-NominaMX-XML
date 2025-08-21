@@ -423,8 +423,18 @@ class NominaXMLProcessor:
                 otros_pagos_encontrados[concepto] = {
                     'Importe': self._convert_to_numeric(otro_pago.get('Importe', '0.00')),
                     'Tipo': otro_pago.get('TipoOtroPago', ''),
-                    'Clave': otro_pago.get('Clave', '')
+                    'Clave': otro_pago.get('Clave', ''),
+                    'SubsidioCausado': 0.0  # Valor por defecto
                 }
+                
+                # Buscar nodo hijo SubsidioAlEmpleo si existe
+                subsidio = otro_pago.find('.//nomina12:SubsidioAlEmpleo', self.namespaces)
+                if subsidio is None:
+                    subsidio = otro_pago.find('.//SubsidioAlEmpleo')
+                
+                if subsidio is not None:
+                    subsidio_causado = subsidio.get('SubsidioCausado', '0.00')
+                    otros_pagos_encontrados[concepto]['SubsidioCausado'] = self._convert_to_numeric(subsidio_causado)
         
         # Crear columnas para TODOS los conceptos del catálogo, llenando con 0 si no existen
         for concepto in sorted(self.conceptos_otros_pagos):
@@ -433,11 +443,13 @@ class NominaXMLProcessor:
                 data[f'{concepto}_Importe'] = otros_pagos_encontrados[concepto]['Importe']
                 data[f'{concepto}_Tipo'] = otros_pagos_encontrados[concepto]['Tipo']
                 data[f'{concepto}_Clave'] = otros_pagos_encontrados[concepto]['Clave']
+                data[f'{concepto}_SubsidioCausado'] = otros_pagos_encontrados[concepto]['SubsidioCausado']
             else:
                 # Concepto no existe en este XML, llenar con valores por defecto
                 data[f'{concepto}_Importe'] = 0.0
                 data[f'{concepto}_Tipo'] = ''
                 data[f'{concepto}_Clave'] = ''
+                data[f'{concepto}_SubsidioCausado'] = 0.0
         
         return data
     
@@ -524,7 +536,7 @@ class NominaXMLProcessor:
         """Convierte automáticamente las columnas de importes a numérico"""
         for column in df.columns:
             # Identificar columnas de importes por su nombre
-            if any(keyword in column.lower() for keyword in ['importe', 'salario', 'total', 'deduccion', 'percepcion']):
+            if any(keyword in column.lower() for keyword in ['importe', 'salario', 'total', 'deduccion', 'percepcion', 'subsidiocausado']):
                 try:
                     # Convertir a numérico, llenando valores no numéricos con 0
                     df[column] = pd.to_numeric(df[column], errors='coerce').fillna(0.0)
